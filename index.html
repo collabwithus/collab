@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Creator Catalyst Platform</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyA8MAsSSkU6YdiM9QUP2Hwj0WqXSdGiYuQ",
+      authDomain: "collab-82952.firebaseapp.com",
+      projectId: "collab-82952"
+    };
+    firebase.initializeApp(firebaseConfig);
+  </script>
+  <style>
+    :root {
+      --dark: #161616;
+      --light: #fff;
+      --gray: #f6f6f6;
+      --accent: #222;
+      --border: #e1e1e1;
+      --modal-bg: rgba(20,20,20,0.7);
+      --shadow: 0 4px 28px rgba(20,20,20,0.08);
+    }
+    html { scroll-behavior: smooth; background: var(--light);}
+    body {
+      margin: 0;
+      font-family: 'Poppins', Arial, sans-serif;
+      background: linear-gradient(135deg,var(--light),var(--gray));
+      color: var(--accent);
+    }
+    header {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 24px 40px;
+      background: var(--light);
+      box-shadow: var(--shadow);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo-container {
+      display: flex; align-items: center;
+      font-weight: 600; font-size: 22px; text-decoration: none; color: var(--dark);
+    }
+    .logo {
+      width: 44px; height: 44px; border-radius: 50%; object-fit: contain;
+      margin-right: 14px; background: var(--light); border: 2px solid var(--dark);
+    }
+    nav {
+      flex-grow: 1; display: flex; justify-content: center; gap: 38px; font-size: 18px;
+    }
+    nav a {
+      color: var(--accent); text-decoration: none; font-weight: 500; padding: 4px 10px;
+      border-radius: 4px; transition: background .2s, color .2s;
+    }
+    nav a.active, nav a:hover {
+      background: var(--accent); color: var(--light);
+    }
+    .profile {
+      display: flex; align-items: center; gap: 16px;
+    }
+    .profile button {
+      padding: 10px 22px; background: var(--gray); border: 1px solid var(--border);
+      border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 500; color: var(--accent);
+      transition: background .2s, color .2s;
+    }
+    .profile button:hover {
+      background: var(--accent); color: var(--light);
+    }
+    .blur-in {
+      opacity: 0; filter: blur(10px); transform: translateY(20px);
+      transition: opacity 1.1s cubic-bezier(.2,.5,.6,.9), filter 1.1s cubic-bezier(.2,.5,.6,.9), transform 1.1s cubic-bezier(.2,.5,.6,.9);
+      will-change: opacity, filter, transform;
+    }
+    .blur-in.visible { opacity: 1; filter: blur(0px); transform: translateY(0);}
+    main {
+      max-width: 950px; margin: 0 auto; padding: 44px 20px 54px 20px;
+    }
+    section {
+      margin-top: 60px; background: var(--light); border-radius: 18px; box-shadow: var(--shadow);
+      padding: 40px; border-left: 5px solid var(--accent);
+    }
+    .hero {
+      text-align: center; padding: 40px 0; margin-top: 0;
+    }
+    .hero h1 { font-size: 2.8em; font-weight: 700; margin-bottom: 20px; }
+    .hero .subtitle { font-size: 1.18em; color: #393939; max-width: 620px; margin: 0 auto 30px;}
+    .cta-button {
+      font-size: 1.1em; padding: 16px 45px; background: var(--accent); color: var(--light); border: none;
+      border-radius: 10px; cursor: pointer; font-weight: 600; box-shadow: var(--shadow); margin-top: 24px;
+      transition: background .2s, transform .2s;
+    }
+    .cta-button:hover { background: var(--dark); transform: scale(1.04) translateY(-2px);}
+    h2 { font-size: 2.1em; color: var(--dark); margin-bottom: 25px; font-weight: 700;}
+    .why-us-list { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 28px;}
+    .why-us-list li {
+      font-size: 1.07em; background: var(--gray); color: var(--accent);
+      padding: 19px; border-radius: 10px; list-style-type: none; border: 1px solid var(--border);
+    }
+    .tabs { display: flex; justify-content: center; margin-top: 10px;}
+    .tab {
+      padding: 12px 34px; cursor: pointer; background: var(--gray); margin: 0 4px;
+      border-radius: 10px 10px 0 0; font-weight: 600; color: var(--accent); border: 1px solid var(--border); border-bottom: none;
+      transition: background .2s, color .2s;
+    }
+    .tab.active {
+      background: var(--light); color: var(--dark); border-bottom: 1px solid var(--light);
+    }
+    .tab-content { display: none; padding: 30px; border: 1px solid var(--border); border-top: none; border-radius: 0 0 18px 18px; background: var(--light); margin: 0 auto; max-width: 700px;}
+    .tab-content.active { display: block; }
+    .tab-content h3 { font-size: 1.18em; margin-top: 0; border-bottom: 2px solid var(--border); padding-bottom: 10px; color: var(--dark);}
+    form { display: flex; flex-direction: column; gap: 15px;}
+    form label { font-weight: 500; color: var(--accent);}
+    form input, form select, form textarea {
+      width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit;
+      font-size: 1em; background: var(--gray); color: var(--dark); transition: border .2s;
+    }
+    form input:focus, form select:focus, form textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px #0002;}
+    form button { align-self: flex-start; margin-top: 10px;}
+    /* Centered Modal */
+    .modal-bg {
+      display: none; position:fixed; left:0; top:0; width:100vw; height:100vh; background: var(--modal-bg);
+      z-index:999; align-items: center; justify-content: center;
+    }
+    .modal {
+      background: var(--light); border-radius: 14px; box-shadow: 0 8px 28px rgba(20,20,20,0.13);
+      padding: 28px 22px 16px 22px; max-width: 340px; margin: auto; position: relative; animation: fadeIn .4s;
+    }
+    @keyframes fadeIn { from {transform: scale(0.98) translateY(20px); opacity:0;} to {transform: scale(1) translateY(0); opacity:1;} }
+    .modal h3 { margin: 0 0 14px; color: var(--dark);}
+    .modal button {
+      width: 100%; margin-top:18px; padding:10px; border-radius:6px; border:none;
+      background: var(--accent); color: var(--light); font-weight:600; cursor:pointer; font-size: 15px;
+    }
+    .modal-close { background: none; border: none; color: var(--accent); position: absolute; right: 8px; top: 8px; font-size: 22px; cursor: pointer;}
+    @media(max-width:850px) {
+      .why-us-list{grid-template-columns:1fr;}
+      header{padding:16px 10px;}
+      main{padding:25px 5px;}
+    }
+  </style>
+</head>
+<body>
+  <!-- Modals -->
+  <div id="loginModal" class="modal-bg">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('loginModal')">&times;</button>
+      <h3>Login</h3>
+      <form id="loginForm">
+        <label>Email<br><input type="email" id="loginEmail" required></label>
+        <label>Password<br><input type="password" id="loginPassword" required></label>
+        <button type="submit">Login</button>
+      </form>
+    </div>
+  </div>
+  <div id="signupModal" class="modal-bg">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('signupModal')">&times;</button>
+      <h3>Sign Up</h3>
+      <form id="signupForm">
+        <label>Email<br><input type="email" id="signupEmail" required></label>
+        <label>Password<br><input type="password" id="signupPassword" required></label>
+        <button type="submit">Sign Up</button>
+      </form>
+    </div>
+  </div>
+  <!-- Header/Menu -->
+  <header>
+    <a href="#home-section" class="logo-container"><img src="logo.jpg" alt="Handshake logo" class="logo">Collab</a>
+    <nav>
+      <a href="#home-section" class="active">Home</a>
+      <a href="#whyus-section">Why Us?</a>
+      <a href="#contact-section">Contact</a>
+      <a href="#letsstart-section">Let's Start</a>
+    </nav>
+    <!--
+    <div class="profile">
+      <button id="loginBtn">Login</button>
+      <button id="signupBtn">Sign Up</button>
+    </div>
+  -->
+  </header>
+  <main>
+    <section id="home-section" class="hero">
+      <h1 class="blur-in">Empower Creators & Small Businesses</h1>
+      <div class="subtitle blur-in">Access stories, creative assets, and news for your growth.<br>
+        Request custom content, connect with editors, and amplify your brand!
+      </div>
+      <a href="#letsstart-section" class="cta-button blur-in">Get Started</a>
+    </section>
+    <section id="whyus-section">
+      <h2 class="blur-in">Why Us?</h2>
+      <p class="blur-in" style="max-width:680px;">
+        Collab is built to help ambitious creators and businesses step into the spotlight.<br>
+        We provide professional content, insightful news at minimum possible capital making your journey easier and more impactful, making us different from others which only focuses on big startups.
+      </p>
+      <ul class="why-us-list">
+        <li class="blur-in">Curated content library, always updated</li>
+        <li class="blur-in">Request personalized assets at any time</li>
+        <li class="blur-in">Direct communication with experienced editors</li>
+        <li class="blur-in">Success stories and news to inspire your next move</li>
+        <li class="blur-in">Simple, friendly process for all backgrounds</li>
+        <li class="blur-in">Resource hub of guides and templates</li>
+      </ul>
+      <p class="blur-in" style="margin-top:28px; max-width:680px;">
+       Whether you're a solo creator or a growing business, Collab is your partner in making content that connects and converts. Join us and start creating with confidence today!<br><b>Your imagination, our creation.</b>
+    </section>
+    <section id="letsstart-section">
+      <h2 class="blur-in">Let's Start</h2>
+      <div class="tabs">
+        <button class="tab active" onclick="showTab(0)">Contents</button>
+        <button class="tab" onclick="showTab(1)">News</button>
+        <button class="tab" onclick="showTab(2)">Request Content</button>
+      </div>
+      <div class="tab-content active" id="contents">
+        <h3>Content Library</h3>
+        <p class="blur-in">Explore ready-made resources: articles, business templates, design assets, and social media ideas curated for growing brands and creators.</p>
+        <ul>
+          <li>Instagram post</li>
+          <li>Logo and branding templates</li>
+          <li>Blog article vault</li>
+          <li>Small business marketing kit</li>
+        </ul>
+        <p class="blur-in">Dive in and request the perfect content to elevate your brand!</p>
+      </div>
+      <div class="tab-content" id="news">
+        <h3>Latest News</h3>
+        <div class="blur-in">
+          <ul>
+            <li><strong>July 2025:</strong> “How Small Businesses Can Leverage AI Content Tools”</li>
+            <li><strong>June 2025:</strong> “Five Success Stories From Our Platform”</li>
+            <li><strong>May 2025:</strong> “Content Trends Every Creator Should Know”</li>
+          </ul>
+          <p>For more related news request type of news under request content section.</p>
+        </div>
+      </div>
+      <div class="tab-content" id="request">
+        <h3>Request Content</h3>
+        <form
+          action="https://formspree.io/f/myzddald"
+          method="POST"
+          class="blur-in"
+        >
+          <label>Your email:<br><input type="email" name="email" required></label>
+          <label>Type of content:<br><textarea name="message"></textarea></label>
+          <label>Your message:<br><textarea name="message"></textarea></label>
+          <button type="submit" class="cta-button">Send</button>
+        </form>
+      </div>
+    </section>
+  </main>
+  <!-- Contact Section -->
+  <section id="contact-section" style="margin-top:40px; background: var(--gray); border-radius: 18px; box-shadow: var(--shadow); padding: 40px; border-left: 5px solid var(--accent); max-width: 950px; margin-left: auto; margin-right: auto;">
+    <h2 style="margin-bottom: 20px;">Contact</h2>
+    <p style="margin-bottom: 18px;">Reach out to our creators directly:</p>
+    <table style="width:100%; border-collapse:collapse;">
+      <thead>
+        <tr style="background: var(--light);">
+          <th style="text-align:left; padding:10px; border-bottom:1px solid var(--border);">Name</th>
+          <th style="text-align:left; padding:10px; border-bottom:1px solid var(--border);">Phone Number</th>
+          <th style="text-align:left; padding:10px; border-bottom:1px solid var(--border);">Email</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:10px; border-bottom:1px solid var(--border);">Ansuman visual works</td>
+          <td style="padding:10px; border-bottom:1px solid var(--border);">+91 xxxxx xxxxx</td>
+          <td style="padding:10px; border-bottom:1px solid var(--border);">work@gmail.com</td>
+        </tr>
+        <tr>
+          <td style="padding:10px; border-bottom:1px solid var(--border);">when.riya.clicks</td>
+          <td style="padding:10px; border-bottom:1px solid var(--border);">+91 xxxxx xxxxx</td>
+          <td style="padding:10px; border-bottom:1px solid var(--border);">work@gmail.com</td>
+        </tr>
+        <tr>
+          <td style="padding:10px; border-bottom:1px solid var(--border);">Creators hub</td>
+          <td style="padding:10px; border-bottom:1px solid var(--border);">+91 xxxxx xxxxx</td>
+          <td style="padding:10px; border-bottom:1px solid var(--border);">work@gmail.com</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+  <script>
+    function showTab(tabIdx) {
+      document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',i===tabIdx));
+      document.querySelectorAll('.tab-content').forEach((t,i)=>t.classList.toggle('active',i===tabIdx));
+      revealBlur();
+    }
+    function revealBlur() {
+      document.querySelectorAll('.blur-in').forEach(function(el) {
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight - 20) { el.classList.add('visible'); }
+      });
+    }
+    window.addEventListener('scroll', revealBlur);
+    window.addEventListener('load', revealBlur);
+
+    function onScroll() {
+      const sections = document.querySelectorAll('section');
+      const navLinks = document.querySelectorAll('nav a');
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        if (window.scrollY >= sectionTop - sectionHeight / 3) {
+          current = section.getAttribute('id');
+        }
+      });
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href').includes(current)) {
+          link.classList.add('active');
+        }
+      });
+      revealBlur();
+    }
+    window.addEventListener('scroll', onScroll);
+    window.addEventListener('load', onScroll);
+
+    document.getElementById('loginBtn').onclick = function() {
+      document.getElementById('loginModal').style.display = 'flex';
+    };
+    document.getElementById('signupBtn').onclick = function() {
+      document.getElementById('signupModal').style.display = 'flex';
+    };
+    function closeModal(id) {
+      document.getElementById(id).style.display = 'none';
+    }
+    document.getElementById('loginForm').onsubmit = function(e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+      firebase.auth().signInWithEmailAndPassword(email, password)
+        .then(userCredential => { alert('Logged in!'); closeModal('loginModal'); })
+        .catch(error => { alert('Error: ' + error.message); });
+    };
+    document.getElementById('signupForm').onsubmit = function(e) {
+      e.preventDefault();
+      const email = document.getElementById('signupEmail').value;
+      const password = document.getElementById('signupPassword').value;
+      firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then(userCredential => { alert('Account created!'); closeModal('signupModal'); })
+        .catch(error => { alert('Error: ' + error.message); });
+    };
+    document.addEventListener('DOMContentLoaded', () => { showTab(0); onScroll(); revealBlur(); });
+  </script>
+</body>
+</html>
